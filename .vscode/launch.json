@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.devcontainer/devcontainer.env"
+        },
+        {
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "purpose": [
+                "debug-test"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.devcontainer/devcontainer.env"
+        },
+        {
+            "name": "Python: Debug Deployment Generator",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/op_orm/deployment_generator.py",
+            "args": [
+                "${workspaceFolder}/examples/example_models.py",
+                "-p"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.devcontainer/devcontainer.env"
+        }
+    ]
+}
