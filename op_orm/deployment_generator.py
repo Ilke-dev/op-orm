@@ -20,22 +20,25 @@ env = Environment(
 )
 
 
-def b64encode_filter(value):
-    if isinstance(value, str):
-        return base64.b64encode(value.encode("utf-8")).decode("utf-8")
-    return base64.b64encode(value).decode("utf-8")
-
-
 def quote_filter(value):
     return f'"{value}"'
 
 
-env.filters["b64encode"] = b64encode_filter
 env.filters["quote"] = quote_filter
 
 
-def import_module_from_path(file_path: str):
-    """Dynamically import a Python module from a file path."""
+def import_module_from_path(file_path: str) -> object:
+    """Dynamically import a Python module from a file path.
+
+    Args:
+        file_path: Path to the Python file to import
+
+    Returns:
+        Imported module object
+
+    Raises:
+        ImportError: If module cannot be loaded
+    """
     path = Path(file_path).resolve()
     module_name = path.stem
 
@@ -50,7 +53,14 @@ def import_module_from_path(file_path: str):
 
 
 def collect_model_classes(module) -> list[type[OpModel]]:
-    """Find all OpModel subclasses in the given module."""
+    """Find all OpModel subclasses in the given module.
+
+    Args:
+        module: Python module to inspect
+
+    Returns:
+        List of OpModel subclass types
+    """
     models = []
     for name, obj in inspect.getmembers(module):
         if (
@@ -64,12 +74,28 @@ def collect_model_classes(module) -> list[type[OpModel]]:
 
 
 def get_user_model_classes(file_path: str) -> list[type[OpModel]]:
+    """Load and collect OpModel classes from a Python file.
+
+    Args:
+        file_path: Path to the Python file containing model definitions
+
+    Returns:
+        List of OpModel subclass types
+    """
     module = import_module_from_path(file_path)
     models = collect_model_classes(module)
     return models
 
 
-def generate_deployment_files(models: list[type[OpModel]]):
+def generate_deployment_files(models: list[type[OpModel]]) -> str:
+    """Generate Kubernetes secret YAML from OpModel classes.
+
+    Args:
+        models: List of OpModel classes to generate secrets for
+
+    Returns:
+        String containing the generated YAML content
+    """
     template = env.get_template("secret.yaml.j2")
     rendered_templates = []
     for orm_model in models:

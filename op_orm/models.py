@@ -7,6 +7,11 @@ import os
 
 
 class OpModel:
+    """Base class for 1Password item models.
+
+    Provides core functionality for creating, updating, and managing 1Password items.
+    """
+
     __client__: OpClient | None = None
     title: str
     category: ItemCategory
@@ -15,7 +20,12 @@ class OpModel:
     vault_id: str | None = None
     fields: list[ORMItemField] = []
 
-    def __init__(self, **data: dict[str, Any]):
+    def __init__(self, **data: dict[str, Any]) -> None:
+        """Initialize a new 1Password item model.
+
+        Args:
+            **data: Dictionary of model attributes
+        """
         self.data = data
         self.vault_id = None
         self.fields = {}
@@ -29,7 +39,11 @@ class OpModel:
         if len(self.fields) == 0:
             raise OpOrmException("No fields found in the model")
 
-    def _retrieve_orm_fields(self):
+    def _retrieve_orm_fields(self) -> None:
+        """Retrieve and initialize ORM fields from class definition.
+
+        Creates instance-level copies of class-level field definitions.
+        """
         # Get all the fields defined in the class
         self._orm_fields = {
             key: val
@@ -68,6 +82,11 @@ class OpModel:
         return self.__client__
 
     def get_item_create_params(self) -> ItemCreateParams:
+        """Generate parameters for creating a new 1Password item.
+
+        Returns:
+            ItemCreateParams object with configured item properties
+        """
         return ItemCreateParams(
             title=self.title,
             category=self.category,
@@ -80,7 +99,15 @@ class OpModel:
             websites=[],
         )
 
-    def create(self):
+    def create(self) -> Item:
+        """Create a new item in 1Password.
+
+        Returns:
+            The created Item object
+
+        Raises:
+            OpOrmException: If item already exists or required fields are missing
+        """
         try:
             existing_item = self.client.get_item_uuid(self.title)
             if existing_item:
@@ -96,7 +123,8 @@ class OpModel:
         except Exception as e:
             raise OpOrmException(f"Failed to create item: {e}")
 
-    def resolve_all(self):
+    def resolve_all(self) -> None:
+        """Resolve and update all field values from 1Password."""
         values = self.get()
         for field_name, field in self.fields.items():
             field_value = [
@@ -104,7 +132,15 @@ class OpModel:
             ][0]
             field.value = field_value
 
-    def update_existing_fields(self, field_updates: dict[str, str]):
+    def update_existing_fields(self, field_updates: dict[str, str]) -> None:
+        """Update values of existing fields in 1Password.
+
+        Args:
+            field_updates: Dictionary mapping field names to new values
+
+        Raises:
+            OpOrmException: If the item doesn't exist
+        """
         item = self.get()
         if not item:
             raise OpOrmException(f"Can't update item: {self.title} does not exist")
@@ -119,15 +155,20 @@ class OpModel:
 
         self.client.update_item(item)
 
-    def get(self):
+    def get(self) -> Item:
+        """Retrieve the item from 1Password.
+
+        Returns:
+            Item object from 1Password
+        """
         return self.client.get_item(self.title)
 
-    def archive(self):
-        # Archive an item
+    def archive(self) -> None:
+        """Archive the item in 1Password."""
         self.client.archive_item(self.title)
 
-    def delete(self):
-        # Delete an item
+    def delete(self) -> None:
+        """Delete the item from 1Password."""
         self.client.delete_item(self.title)
 
     def restore(self, name: str):
@@ -138,5 +179,10 @@ class OpModel:
         asyncio.run(self.client.client.items.restore(self.vault_id, self.id))
         """
 
-    def save(self):
+    def save(self) -> Item:
+        """Create the item in 1Password.
+
+        Returns:
+            The created Item object
+        """
         self.create()

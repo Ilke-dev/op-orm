@@ -70,12 +70,27 @@ class OpModelSSHKey(OpModel):
 
 
 class PasswordField(ORMItemField):
-    def __init__(self, section_id: str = None, value: str = None):
+    """A field for storing and generating passwords.
+
+    Extends ORMItemField with password-specific functionality.
+    """
+
+    def __init__(self, section_id: str = None, value: str = None) -> None:
+        """Initialize a password field.
+
+        Args:
+            section_id: Optional section identifier
+            value: Optional initial password value
+        """
         super().__init__(
             field_type=ItemFieldType.CONCEALED, section_id=section_id, value=value
         )
 
-    def generate_password(self):
+    def generate_password(self) -> None:
+        """Generate a new random password and set it as the field value.
+
+        Generates a 100-character password including digits and symbols.
+        """
         password = Secrets.generate_password(
             PasswordRecipeRandom(
                 parameters=PasswordRecipeRandomInner(

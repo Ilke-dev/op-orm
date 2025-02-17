@@ -6,7 +6,17 @@ import os
 
 
 class OpClient:
-    def __init__(self, integration_name: str = "op-orm"):
+    """Client for interacting with 1Password Connect API.
+
+    Handles authentication and provides methods for managing items.
+    """
+
+    def __init__(self, integration_name: str = "op-orm") -> None:
+        """Initialize the client.
+
+        Args:
+            integration_name: Name to identify this integration to 1Password
+        """
         self._client = None
         self._vault_id = None
         self._vault_name = None
@@ -46,7 +56,12 @@ class OpClient:
         item_iterator = asyncio.run(self.client.items.list_all(self._vault_id))
         return item_iterator.obj
 
-    def create_all(self, model_classes: list):
+    def create_all(self, model_classes: list) -> None:
+        """Create all items from a list of model classes.
+
+        Args:
+            model_classes: List of OpModel classes to create
+        """
         [model_class.create() for model_class in model_classes]
 
     def delete_all(self, model_classes: list):
@@ -55,7 +70,19 @@ class OpClient:
     def archive_all(self, model_classes: list):
         [model_class.archive() for model_class in model_classes]
 
-    def get_item_uuid(self, title: str, exception=True):
+    def get_item_uuid(self, title: str, exception: bool = True) -> str | None:
+        """Get UUID of an item by its title.
+
+        Args:
+            title: Title of the item to find
+            exception: Whether to raise exceptions on errors
+
+        Returns:
+            Item UUID if found, None otherwise
+
+        Raises:
+            OpOrmException: If exception=True and item lookup fails
+        """
         try:
             items = [item.id for item in self.items if item.title == title]
             return items[0] if items else None
@@ -85,7 +112,18 @@ class OpClient:
     def update_item(self, item_params: ItemCreateParams):
         return asyncio.run(self.client.items.put(item_params))
 
-    def validate_secret_reference(self, reference: str):
+    def validate_secret_reference(self, reference: str) -> bool:
+        """Validate a 1Password secret reference string format.
+
+        Args:
+            reference: Reference string to validate
+
+        Returns:
+            True if valid
+
+        Raises:
+            ValueError: If reference format is invalid
+        """
         parts = reference.split("/")
         if len(parts) < 4 or not reference.startswith("op://"):
             raise ValueError(f"Invalid secret reference format: {reference}")

@@ -4,9 +4,21 @@ import time
 
 
 class ORMItemField:
+    """Base field class for 1Password item fields.
+
+    Handles field value management and synchronization with 1Password.
+    """
+
     def __init__(
         self, field_type: ItemFieldType, section_id: str = None, value: str = None
-    ):
+    ) -> None:
+        """Initialize a new field.
+
+        Args:
+            field_type: Type of the 1Password field
+            section_id: Optional section identifier
+            value: Optional initial value
+        """
         self.field_type = field_type
         self.section_id = section_id
         self._value = value
@@ -67,7 +79,11 @@ class ORMItemField:
         self._sync = False
 
     def to_item_field(self) -> ItemField:
-        # Fix the field creation by ensuring proper type enum usage
+        """Convert to a 1Password ItemField.
+
+        Returns:
+            Configured ItemField instance
+        """
         return ItemField(
             id=self.field_name,
             title=self.field_name,
@@ -77,13 +93,29 @@ class ORMItemField:
         )
 
     def _resolve(self) -> str:
+        """Resolve the field value from 1Password.
+
+        Returns:
+            Resolved field value
+
+        Raises:
+            OpOrmException: If client is not set
+        """
         if self._client is None:
             raise OpOrmException("Client is not set")
 
         return self._client.resolve_secret(self._reference)
 
     @property
-    def _reference(self):
+    def _reference(self) -> str:
+        """Generate the 1Password reference string for this field.
+
+        Returns:
+            Reference string in format op://vault/item/[section/]field
+
+        Raises:
+            OpOrmException: If required properties are not set
+        """
         if self.vault_name and self.field_name and self.title:
             if self.section_id:
                 reference = f"op://{self.vault_name}/{self.title}/{self.section_id}/{self.field_name}"

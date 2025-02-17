@@ -1,31 +1,117 @@
 # 1Password ORM
 
-This project is an Object-Relational Mapping (ORM) library for 1Password. It allows you to interact with 1Password data using Python objects.
+A robust Python ORM for managing 1Password secrets with elegance. This library provides a secure, type-safe interface for interacting with 1Password items using familiar ORM patterns.
 
-## Example code / Usage
+## 🌟 Key Features
+
+- 🔐 Type-safe field definitions with built-in validation
+- 🔄 Automated password generation and management
+- 🎯 Clean, Pythonic model-based structure
+- 🔑 Comprehensive support for all 1Password item types
+- 🚀 Easy CRUD operations with version tracking
+- 🔒 Secure integration with 1Password Connect
+- 📦 Kubernetes secrets generation
+
+## 📦 Installation
+
+```bash
+pip install op-orm
+```
+
+## 🔧 Quick Start
+
+1. Set up environment variables:
+```bash
+export OP_CONNECT_TOKEN="your-1password-connect-token"
+export OP_INTEGRATION_NAME="your-app-name"
+```
+
+2. Define your models:
+```python
+from op_orm.types import OpModelDatabase, StringField, PasswordField, UrlField
+
+class PostgresDatabase(OpModelDatabase):
+    title = "production-postgres"
+    sections = ["connection", "auth"]
+    
+    host = StringField(section_id="connection", value="db.example.com")
+    port = StringField(section_id="connection", value="5432")
+    database = StringField(section_id="connection", value="myapp")
+    username = StringField(section_id="auth", value="admin")
+    password = PasswordField(section_id="auth")
+```
+
+3. Use your models:
+```python
+# Create and save credentials
+db = PostgresDatabase()
+db.password.generate_password()  # Generates secure random password
+db.create()
+
+# Update credentials
+db.update_existing_fields({
+    "username": "new_admin",
+    "host": "new-db.example.com"
+})
+
+# Retrieve credentials
+db.resolve_all()  # Fetches latest values from 1Password
+print(f"Connection string: postgresql://{db.username.value}@{db.host.value}")
+```
+
+## 🏗️ Model Types
+
+The library provides specialized models for common credential types:
+
+- `OpModelServer` - Server credentials
+- `OpModelDatabase` - Database connections
+- `OpModelAPIKey` - API credentials
+- `OpModelLogin` - Login credentials
+- `OpModelSSHKey` - SSH keys
+- `OpModelSecureNote` - Secure notes
+- And more...
+
+## 🔐 Field Types
+
+Available field types for model attributes:
+
+- `StringField` - Text values (optionally concealed)
+- `PasswordField` - Auto-generating password fields
+- `UrlField` - URL fields with validation
+
+## 🚀 Advanced Usage
+
+### Kubernetes Secret Generation
+
+Generate Kubernetes secrets from your models:
 
 ```python
-from op_orm.types import (
-    OpModelServer,
-    OpModelDatabase,
-    OpModelAPIKey,
-    OpModelSSHKey,
-    StringField,
-    PasswordField,
-    UrlField,
-)
+from op_orm.deployment_generator import generate_deployment_files
 
-
-class Server(OpModelServer):
-    title = "Server"
-    sections = ["server"]
-    ip_address = StringField(value="192.168.1.1", section_id="server")
-    username = StringField(value="root", section_id="server")
-    password = PasswordField(section_id="server")
-
-server = Server()
-server.password.generate_password()
-server.create()
-server.update_existing_fields({"password": "new_password", "username": "blaa"})
-server.delete()
+# Generate YAML for k8s secrets
+deployment = generate_deployment_files([PostgresDatabase])
+with open("k8s-secrets.yaml", "w") as f:
+    f.write(deployment)
 ```
+
+### Custom Field Validation
+
+Add custom validation to your fields:
+
+```python
+class APICredentials(OpModelAPIKey):
+    api_key = StringField(section_id="api", concealed=True)
+    environment = StringField(section_id="api")
+    
+    def validate(self):
+        if self.environment.value not in ["prod", "staging", "dev"]:
+            raise ValueError("Invalid environment")
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
