@@ -18,13 +18,46 @@ maintainers = [
 ]
 description = "Object Relational Mapping for 1Password items, manage 1Password vaults with code."
 readme = "README.md"
-keywords = ["1password", "orm", "op", "op-orm", "onepassword"]
+keywords = [
+    "1password", 
+    "orm", 
+    "op", 
+    "op-orm", 
+    "onepassword", 
+    "onepassword-sdk",
+    "devops", 
+    "secret-management", 
+    "password-manager",
+    "credentials",
+    "security",
+    "kubernetes",
+    "k8s",
+    "vault",
+    "secret-management",
+    "secret-store",
+    "api-keys",
+    "database-credentials",
+    "ssh-keys",
+    "infrastructure",
+    "automation",
+    "configuration-management"
+    ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 4 :: Beta",
     "Intended Audience :: Developers",
-    "Topic :: Software Development :: Build Tools",
-    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: DevOps Engineers",
+    "Topic :: Security",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+    "Topic :: System :: DevOps",
+    "Topic :: System :: DevSecOps",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
 ]
+license = "GPL-3.0"
+license-files = ["LICENCSE.txt"]
 
 [tool.setuptools]
 packages = ["op_orm"]  # Declare the actual package name
