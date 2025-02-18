@@ -56,8 +56,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
-license = "GPL-3.0"
-license-files = ["LICENCSE.txt"]
+license = {file = "LICENSE.txt"}
 
 [tool.setuptools]
 packages = ["op_orm"]  # Declare the actual package name
