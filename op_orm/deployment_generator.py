@@ -3,7 +3,6 @@ import importlib.util
 import inspect
 from pathlib import Path
 
-from annotated_types import T
 from op_orm.models import OpModel
 import argparse
 from os import path
@@ -105,8 +104,7 @@ def generate_deployment_files(models: list[type[OpModel]]) -> str:
     return "\n---\n".join(rendered_templates)
 
 
-if __name__ == "__main__":
-
+def run_cli_k8s_deployment_generator():
     parser = argparse.ArgumentParser(
         description="Collect OpModel subclasses from a Python file."
     )

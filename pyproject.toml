@@ -47,4 +47,4 @@ testpaths = [
 ]
 
 [project.scripts]
-generate_deployments = "op_orm.generate_deployments:main"
+generate_deployments = "op_orm.deployment_generator:run_cli_k8s_deployment_generator"
