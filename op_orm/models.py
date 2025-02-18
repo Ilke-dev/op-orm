@@ -173,11 +173,11 @@ class OpModel:
 
     def restore(self, name: str):
         """
-        Restore an item
-        Restore doesn't exist in the onepassword-sdk????
-        Maybe Archive is just an other vault?
-        asyncio.run(self.client.client.items.restore(self.vault_id, self.id))
+        As per the official sdk, the restore method is not implemented yet.
         """
+        raise NotImplementedError(
+            "There is no support from onepassword-sdk to restore an item after it's been archived"
+        )
 
     def save(self) -> Item:
         """Create the item in 1Password.
