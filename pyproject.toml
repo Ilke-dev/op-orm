@@ -67,6 +67,7 @@ dev = [
     "pytest",
     "debugpy",
     "twine",
+    "build",
 ]
 
 [tool.pytest.ini_options]
