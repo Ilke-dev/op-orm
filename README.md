@@ -108,7 +108,6 @@ class APICredentials(OpModelAPIKey):
             raise ValueError("Invalid environment")
 ```
 
-## Generate k8s deployments
 # Generate Kubernetes Secrets from OpModel
 
 The `generate_deployments` command-line tool streamlines the integration between your Python OpModel classes and the 1Password Kubernetes Operator (connect). It automates the process of creating Kubernetes secret definitions by scanning your Python files for OpModel subclasses and converting them into the appropriate YAML format required by the 1Password k8s operator.
