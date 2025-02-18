@@ -53,7 +53,7 @@ def model_builder(request):
     params = request.param if hasattr(request, "param") else {}
     create = params.get("create", False)
     cleanup = params.get("cleanup", False)
-    once = params.get("once", False)
+    once = params.get("once", True)
 
     models: list[OpModel] = []
     for model_cls in MODELS:
