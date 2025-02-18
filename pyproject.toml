@@ -67,6 +67,7 @@ package-dir = {"op_orm" = "op_orm"}  # Declare the source directory
 dev = [
     "pytest",
     "debugpy",
+    "twine",
 ]
 
 [tool.pytest.ini_options]
