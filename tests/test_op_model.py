@@ -35,12 +35,7 @@ def test_update_item(model_builder):
 def test_archive_item(model_builder):
     for op_model in model_builder:
         op_model.archive()
-        try:
-            op_model.get()
-            assert False  # This should not be reached
-        except Exception as e:
-            assert e.args[0] == "item is not in an active state"
-
+        assert op_model.get() == None
 
 @pytest.mark.parametrize("model_builder", [{"create": True}], indirect=True)
 def test_delete_item(model_builder):

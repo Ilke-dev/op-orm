@@ -37,8 +37,8 @@ class OpClient:
     @property
     def vault_id(self) -> str:
         if not self._vault_id:
-            vaults = asyncio.run(self.client.vaults.list_all())
-            vault = vaults.obj[0]  # Get first vault only
+            vaults = asyncio.run(self.client.vaults.list())
+            vault = vaults[0]  # Get first vault only
             self._vault_id = vault.id
             self._vault_name = vault.title
         return self._vault_id
@@ -46,15 +46,14 @@ class OpClient:
     @property
     def vault_name(self) -> str:
         if not self._vault_name:
-            vaults = asyncio.run(self.client.vaults.list_all())
-            self._vault_id = vaults.obj[0].id
-            self._vault_name = vaults.obj[0].name
+            vaults = asyncio.run(self.client.vaults.list())
+            self._vault_id = vaults[0].id
+            self._vault_name = vaults[0].title
         return self._vault_name
 
     @property
     def items(self) -> list[ItemOverview]:
-        item_iterator = asyncio.run(self.client.items.list_all(self._vault_id))
-        return item_iterator.obj
+        return asyncio.run(self.client.items.list(self._vault_id))
 
     def create_all(self, model_classes: list) -> None:
         """Create all items from a list of model classes.
