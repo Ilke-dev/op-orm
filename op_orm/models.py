@@ -126,12 +126,12 @@ class OpModel:
     def resolve_all(self) -> None:
         """Resolve and update all field values from 1Password."""
         values = self.get()
-        for field_name, field in self.fields.items():
+        for field_name, orm_field in self.fields.items():
             field_value = [
-                field.value for field in values.fields if field.id == field_name
+                field.value for field in values.fields if field.title == field_name
             ][0]
-            field.value = field_value
-
+            orm_field.value = field_value
+ 
     def update_existing_fields(self, field_updates: dict[str, str]) -> None:
         """Update values of existing fields in 1Password.
 
